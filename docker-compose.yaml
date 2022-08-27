@@ -1,0 +1,32 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    #expose:
+    #  - 3306
+    environment:
+      MYSQL_ROOT_PASSWORD: admin#1234
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: unless-stopped
+  phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+      - 8088:80
+    environment:
+        PMA_HOST: mysql
+    restart: unless-stopped
+  app-server:
+   image: php-app:latest
+   ports:
+    - 8087:80
+   build:
+     context: .
+     dockerfile: "Dockerfile"
+   depends_on:
+     - mysql
+volumes:
+  mysql-data:
